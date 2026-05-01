@@ -1,0 +1,39 @@
+name: "Metadata Governance Compliance"
+
+on:
+  push:
+    paths:
+      - 'src/governance/tag_policy.yaml'
+  pull_request:
+    paths:
+      - 'src/governance/tag_policy.yaml'
+
+permissions:
+  contents: read
+
+jobs:
+  compliance:
+    name: "Validate Tag Policy Matrix"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Install Yaml checker
+        run: pip install pyyaml
+
+      - name: Parse and Validate YAML structure
+        run: |
+          python -c "
+          import yaml
+          with open('src/governance/tag_policy.yaml', 'r') as f:
+              data = yaml.safe_load(f)
+          assert 'lf_tags' in data, 'Missing lf_tags block!'
+          assert 'database_policies' in data, 'Missing database_policies block!'
+          print('✅ Compliance metadata taxonomy parsed successfully!')
+          "
