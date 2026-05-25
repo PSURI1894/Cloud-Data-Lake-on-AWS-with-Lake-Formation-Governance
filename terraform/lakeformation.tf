@@ -51,10 +51,10 @@ resource "aws_lakeformation_permissions" "finance_analyst_tbac" {
 # Row-Level Security: APAC Data filter on conformed transactions
 resource "aws_lakeformation_data_cells_filter" "apac_transactions_filter" {
   table_data {
-    name                = "apac_transactions_filter"
-    database_name       = aws_glue_catalog_database.conformed.name
-    table_name          = "transactions"
-    database_catalog_id = data.aws_caller_identity.current.account_id
+    name             = "apac_transactions_filter"
+    database_name    = aws_glue_catalog_database.conformed.name
+    table_name       = "transactions"
+    table_catalog_id = data.aws_caller_identity.current.account_id
 
     row_filter {
       filter_expression = "region_code = 'APAC'"
@@ -81,7 +81,7 @@ resource "aws_lakeformation_data_cells_filter" "marketing_customer_filter" {
     name                = "marketing_customer_filter"
     database_name       = aws_glue_catalog_database.consumption.name
     table_name          = "dim_customers"
-    database_catalog_id = data.aws_caller_identity.current.account_id
+    table_catalog_id = data.aws_caller_identity.current.account_id
 
     column_wildcard {
       excluded_column_names = ["ssn", "phone_number"]
