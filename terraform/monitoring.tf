@@ -50,7 +50,7 @@ resource "aws_cloudtrail" "data_lake" {
     include_management_events = true
 
     data_resource {
-      type   = "AWS::S3::Object"
+      type = "AWS::S3::Object"
       values = [
         "${aws_s3_bucket.raw.arn}/",
         "${aws_s3_bucket.conformed.arn}/",
@@ -90,11 +90,11 @@ resource "aws_s3control_storage_lens_configuration" "lake_lens" {
 
     data_export {
       s3_bucket_destination {
-        account_id = data.aws_caller_identity.current.account_id
-        arn        = aws_s3_bucket.utility.arn
-        format     = "CSV"
+        account_id            = data.aws_caller_identity.current.account_id
+        arn                   = aws_s3_bucket.utility.arn
+        format                = "CSV"
         output_schema_version = "V_1"
-        prefix     = "storage_lens_exports"
+        prefix                = "storage_lens_exports"
       }
     }
   }

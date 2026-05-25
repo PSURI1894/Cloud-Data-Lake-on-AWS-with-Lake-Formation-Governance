@@ -50,10 +50,10 @@ resource "aws_lakeformation_permissions" "finance_analyst_tbac" {
 
 # Row-Level Security: APAC Data filter on conformed transactions
 resource "aws_lakeformation_data_cells_filter" "apac_transactions_filter" {
-  name           = "apac_transactions_filter"
-  database_name  = aws_glue_catalog_database.conformed.name
-  table_name     = "transactions"
-  
+  name          = "apac_transactions_filter"
+  database_name = aws_glue_catalog_database.conformed.name
+  table_name    = "transactions"
+
   table_catalog_id = data.aws_caller_identity.current.account_id
 
   row_filter {
@@ -63,9 +63,9 @@ resource "aws_lakeformation_data_cells_filter" "apac_transactions_filter" {
 
 # Grant the APAC Analyst access via the Row-level filter
 resource "aws_lakeformation_permissions" "apac_analyst_filtered_access" {
-  principal = aws_iam_role.apac_analyst_role.arn
+  principal   = aws_iam_role.apac_analyst_role.arn
   permissions = ["SELECT", "DESCRIBE"]
-  
+
   data_cells_filter {
     database_name    = aws_glue_catalog_database.conformed.name
     table_name       = "transactions"
@@ -76,10 +76,10 @@ resource "aws_lakeformation_permissions" "apac_analyst_filtered_access" {
 
 # Column Masking Filter: Nullify SSN for marketing analysts
 resource "aws_lakeformation_data_cells_filter" "marketing_customer_filter" {
-  name           = "marketing_customer_filter"
-  database_name  = aws_glue_catalog_database.consumption.name
-  table_name     = "dim_customers"
-  
+  name          = "marketing_customer_filter"
+  database_name = aws_glue_catalog_database.consumption.name
+  table_name    = "dim_customers"
+
   table_catalog_id = data.aws_caller_identity.current.account_id
 
   column_wildcard {
@@ -92,9 +92,9 @@ resource "aws_lakeformation_data_cells_filter" "marketing_customer_filter" {
 }
 
 resource "aws_lakeformation_permissions" "marketing_analyst_filtered_access" {
-  principal = aws_iam_role.marketing_analyst_role.arn
+  principal   = aws_iam_role.marketing_analyst_role.arn
   permissions = ["SELECT", "DESCRIBE"]
-  
+
   data_cells_filter {
     database_name    = aws_glue_catalog_database.consumption.name
     table_name       = "dim_customers"

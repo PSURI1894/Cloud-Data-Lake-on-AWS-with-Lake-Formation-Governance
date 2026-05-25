@@ -8,7 +8,7 @@ resource "aws_athena_workgroup" "marketing" {
 
     result_configuration {
       output_location = "s3://${aws_s3_bucket.utility.id}/athena_results/marketing/"
-      
+
       encryption_configuration {
         encryption_option = "SSE_KMS"
         kms_key_arn       = aws_kms_key.lake_key.arn
@@ -16,7 +16,7 @@ resource "aws_athena_workgroup" "marketing" {
     }
 
     # Restrict ad-hoc queries to scan max 10 GB per query to protect budget
-    bytes_scanned_cutoff_per_query = 10737418240 
+    bytes_scanned_cutoff_per_query = 10737418240
   }
 }
 
@@ -30,7 +30,7 @@ resource "aws_athena_workgroup" "finance" {
 
     result_configuration {
       output_location = "s3://${aws_s3_bucket.utility.id}/athena_results/finance/"
-      
+
       encryption_configuration {
         encryption_option = "SSE_KMS"
         kms_key_arn       = aws_kms_key.lake_key.arn
