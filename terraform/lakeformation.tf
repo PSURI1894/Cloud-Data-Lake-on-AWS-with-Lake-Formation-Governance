@@ -78,9 +78,9 @@ resource "aws_lakeformation_permissions" "apac_analyst_filtered_access" {
 # Column Masking Filter: Nullify SSN for marketing analysts
 resource "aws_lakeformation_data_cells_filter" "marketing_customer_filter" {
   table_data {
-    name                = "marketing_customer_filter"
-    database_name       = aws_glue_catalog_database.consumption.name
-    table_name          = "dim_customers"
+    name             = "marketing_customer_filter"
+    database_name    = aws_glue_catalog_database.consumption.name
+    table_name       = "dim_customers"
     table_catalog_id = data.aws_caller_identity.current.account_id
 
     column_wildcard {
