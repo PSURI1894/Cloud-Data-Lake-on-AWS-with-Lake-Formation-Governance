@@ -1,0 +1,54 @@
+# Governance LF-Tag Taxonomy Matrix
+lf_tags:
+  BU:
+    description: "Enterprise Business Unit owning the dataset"
+    values: ["marketing", "finance", "compliance", "analytics", "operations"]
+  Sensitivity:
+    description: "Data security classification tier"
+    values: ["public", "internal", "confidential", "restricted"]
+  PII:
+    description: "Granular PII status of catalog column data"
+    values: ["none", "quasi", "direct"]
+
+# Database Schema Mapping Policies
+database_policies:
+  raw_db:
+    bu: "operations"
+    default_sensitivity: "confidential"
+    default_pii: "quasi"
+    
+  conformed_db:
+    tables:
+      transactions:
+        bu: "finance"
+        sensitivity: "internal"
+        columns:
+          transaction_id: { pii: "none" }
+          customer_id: { pii: "none" }
+          amount: { pii: "none" }
+          region_code: { pii: "none" }
+          
+      customers:
+        bu: "operations"
+        sensitivity: "confidential"
+        columns:
+          customer_id: { pii: "none" }
+          first_name: { pii: "quasi" }
+          last_name: { pii: "quasi" }
+          email: { pii: "direct" }
+          phone_number: { pii: "direct" }
+          ssn: { pii: "direct" }
+          ssn_hash: { pii: "none" }
+
+  consumption_db:
+    tables:
+      dim_customers:
+        bu: "analytics"
+        sensitivity: "confidential"
+        columns:
+          ssn: { pii: "direct" }
+          phone_number: { pii: "direct" }
+          email: { pii: "direct" }
+      fact_transactions:
+        bu: "analytics"
+        sensitivity: "internal"
