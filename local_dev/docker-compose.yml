@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  localstack:
+    image: localstack/localstack:latest
+    container_name: datalake_localstack
+    ports:
+      - "4566:4566"            # LocalStack Edge Port
+      - "4571:4571"            # LocalStack SMTP/External port
+    environment:
+      - SERVICES=s3,glue,athena,lakeformation,iam,kms,lambda,cloudtrail,cloudwatch
+      - AWS_DEFAULT_REGION=us-east-1
+      - EDGE_PORT=4566
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    volumes:
+      - "./localstack_volume:/var/lib/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+
+  minio:
+    image: minio/minio:latest
+    container_name: datalake_minio
+    ports:
+      - "9000:9000"            # API
+      - "9001:9001"            # Console (UI)
+    environment:
+      - MINIO_ROOT_USER=admin
+      - MINIO_ROOT_PASSWORD=supersecretpassword
+    command: server /data --console-address ":9001"
+    volumes:
+      - "./minio_volume:/data"
+
+  spark-iceberg:
+    image: tabulardata/spark-iceberg:3.4.1-iceberg-1.3.1
+    container_name: datalake_spark
+    depends_on:
+      - minio
+    ports:
+      - "8888:8888"            # Jupyter Notebook
+      - "8080:8080"            # Spark Web UI
+    environment:
+      - SPARK_DEFAULTS_CONFDIR=/opt/spark/conf
+      - AWS_ACCESS_KEY_ID=admin
+      - AWS_SECRET_ACCESS_KEY=supersecretpassword
+      - AWS_DEFAULT_REGION=us-east-1
+    volumes:
+      - ../src:/opt/spark/src
+      - ../tests:/opt/spark/tests
+      - ./spark_notebooks:/opt/spark/notebooks
+      - ./spark_conf/spark-defaults.conf:/opt/spark/conf/spark-defaults.conf
